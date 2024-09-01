@@ -1,15 +1,16 @@
 <template>
     <div class="flex flex-row justify-center shadow-xl p-10">
-        <div class="info-tab-left basis-1/4 flex flex-row justify-center">
+        <div class="info-tab-left basis-1/4 flex flex-col justify-evenly">
             <div class="heading">
                 <h1 class="text-lg font-semibold">John's appointment</h1>
                 <div class="duration font-semibold">
-                    {{ duration }} Mins
+                    <input type="number" v-model="duration" :min="30" :max="90" class="border-2 rounded-md w-20" :value="duration"> Mins
                 </div>
                 <div class="selected-date font-semibold">
                     {{ formattedDate }}
                 </div>
             </div>
+            <RouterLink to="/events" class="p-3 rounded-lg text-center border-2 w-40 border-inherit">Go to Events</RouterLink>
         </div>
         <div class="calendar basis-1/2 flex flex-col justify-between">
             <div class="heading">
@@ -35,7 +36,7 @@
             </div>
         </div>
         <div class="basis-1/4 flex felx-col justify-center">
-            <Slots :date="selectedDate" :timezone="timezone" :key="compoundSlotKey" />
+            <Slots :date="selectedDate" :duration="duration" :timezone="timezone" :key="compoundSlotKey" />
         </div>
     </div>
 </template>
@@ -50,8 +51,8 @@ export default {
         return {
             selectedDate: new Date(),
             disabledDates: [{to: new Date()}],
-            duration: DURATION,
-            timezone: "America/New_York"
+            duration: 30,
+            timezone: "Asia/Kolkata"
         }
     },
     computed: {

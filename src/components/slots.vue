@@ -38,7 +38,8 @@ import Alert from "./Alert.vue"
 export default {
     props: {
         date: Date,
-        timezone: String
+        timezone: String,
+        duration: Number
     },
     data() {
         return {
@@ -61,7 +62,7 @@ export default {
             try{
                 const selectedDateStr = moment(this.date).format("YYYY-MM-DD");
                 const timeStr = moment(time, "HH:mm A").format("HH:mm:ss");
-                const status = await bookSlot(selectedDateStr, timeStr, this.timezone);
+                const status = await bookSlot(selectedDateStr, timeStr, this.timezone, this.duration);
                 this.isModalOpen = true;
                 this.confirmedSlotData = {
                     selectedDateStr,
@@ -69,7 +70,7 @@ export default {
                     timezone: this.timezone
                 }
             } catch(err) {
-                console.log(err.message ? err.message : message)
+                console.log(err.message ? err.message : err)
                 this.alert = err.message ? err.message : "Something went wrong"
             }
         },

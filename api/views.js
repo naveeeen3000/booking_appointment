@@ -46,7 +46,7 @@ const getEventsView = async (req, res) => {
         const response = successResponse("Successfully fetched events", events);
         return res.send(response.data).status(response.httpStatus);
     } catch(err){
-        logger.error(`Error in bookEventsView ${err}`, data)
+        logger.error(`Error in bookEventsView ${err}`)
         const response = errorResponse(
             err.message ? err.message : "Error in booking the event"
         )

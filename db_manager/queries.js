@@ -18,6 +18,7 @@ const __check_for_existing_event = async (event, dateStr) => {
 const insertEvent = async (data) => {
     logger.info("DB_MANAGER: insertEvent", data);
     const event = new Event(data);
+    event.validate();
     const eventExists = await __check_for_existing_event(event, data.date);
     if (eventExists){
         logger.info("DB_MANAGER: insertEvent | Event already exists");
@@ -33,26 +34,33 @@ const getBookedEvents = async (date, timezone) => {
     const {startTime, endTime} = getUTCStartEndTimes(date);
     const eventDocs = await DB.collection('events').
         where('date', '>=', startTime).where('date', '<=', endTime).get()
-    const events = [];
+    const events = {};
     eventDocs.forEach(doc => {
-        let startTime = convertUnixTime(doc.data().startTime._seconds, timezone, "hh:mm:ss")
-        events.push(startTime);
+        let data = doc.data();
+        let startTime = convertUnixTime(data.startTime._seconds, timezone);
+        let date = convertUnixTime(data.date._seconds, timezone);
+        let endTime = convertUnixTime(data.endTime._seconds, timezone);
+        let startTimeStr = convertUnixTime(data.startTime._seconds, timezone, "hh:mm:ss");
+        data.date = date
+        data.startTime = startTime
+        data.endTime = endTime
+        events[startTimeStr] = data;
     });
     return events
 }
 
 const getEvents = async (startDate, endDate) => {
     logger.info("DB_MANAGER: getEvents", [startDate, endDate])
-    const startDateTime = getDateTimeFromString(startDate, format="YYYY-MM-DD")
-    const endDateTime = getDateTimeFromString(endDate, format="YYYY-MM-DD")
-    const eventDocs = await DB.collection('events').where('date', '>=', startDateTime)
-                        .where('date', '<=', endDateTime).get();
+    const {startTime} = getUTCStartEndTimes(startDate)
+    const {endTime} = getUTCStartEndTimes(endDate)
+    const eventDocs = await DB.collection('events').where('date', '>=', startTime)
+                        .where('date', '<=', endTime).get();
     const events = [];
     eventDocs.forEach(event => {
         let data = event.data();
-        let startTime = convertUnixTime(data.startTime._seconds, timezone, "hh:mm:ss");
-        let date = convertUnixTime(data.date._seconds, timezone, "YYYY-MM-DD");
-        let endTime = convertUnixTime(data.endTime._seconds, timezone, "hh:mm:ss");
+        let startTime = convertUnixTime(data.startTime._seconds, data.timezone, "hh:mm:ss");
+        let date = convertUnixTime(data.date._seconds, data.timezone, "YYYY-MM-DD");
+        let endTime = convertUnixTime(data.endTime._seconds, data.timezone, "hh:mm:ss");
 
         data.date = date
         data.startTime = startTime

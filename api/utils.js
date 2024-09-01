@@ -65,16 +65,33 @@ function getUTCStartEndTimes(dateStr, format="YYYY-MM-DD"){
     return {startTime, endTime}
 }
 
+function getNearestHalfHourTime(momentObj){
+    const minutes = momentObj.minutes();
+    if (minutes === 0 || minutes === 30) {
+        return momentObj.clone().seconds(0).milliseconds(0);
+    }
+    if (minutes < 30) {
+        return momentObj.clone().minutes(30).seconds(0).milliseconds(0);
+    } else {
+        return momentObj.clone().add(1, 'hours').minutes(0).seconds(0).milliseconds(0);
+    }
+}
+
 function getFreeSlots(bookedSlots, date, timezone){
     logger.info("getFreeSlots", {data: [bookedSlots, date, timezone]})
     const slotsDetails = config.slotDetails;
-    let startTime = getLocalDateTimeFromString(slotsDetails.startTime, timezone, "hh:mm:ss")
-    let endTime = getLocalDateTimeFromString(slotsDetails.endTime, timezone, "hh:mm:ss")
+    let startTime = getLocalDateTimeFromString(`${date}T${slotsDetails.startTime}`, timezone, "YYYY-MM-DDThh:mm:ss")
+    let endTime = getLocalDateTimeFromString(`${date}T${slotsDetails.endTime}`, timezone, "YYYY-MM-DDThh:mm:ss")
     const freeSlots = [];
     while(startTime < endTime){
-        if (!bookedSlots.includes(startTime.format("hh:mm:ss"))){
-            freeSlots.push(startTime.format("hh:mm a"))
+        // console.log("LOOOOOooooooop=======>", startTime)
+        if (startTime.format("hh:mm:ss") in bookedSlots){
+            const slot = bookedSlots[startTime.format('hh:mm:ss')]
+            startTime = getNearestHalfHourTime(slot.endTime)
+            // console.log("========>",slot, startTime)
+            continue
         }
+        freeSlots.push(startTime.format("hh:mm A"))
         startTime.add(slotsDetails.duration, "minutes")
     }
     return freeSlots;
