@@ -1,12 +1,13 @@
-import { getDateTimeFromString } from "../api/utils.js"
+import { getDateTimeFromString, addMinutesToDateTime } from "../api/utils.js"
+import config from "../config.js";
 
 class Event {
-    constructor({date, doctor, startTime, endTime, timezone}){
-        this.date = getDateTimeFromString(`${date}`, timezone)
+    constructor({date, doctor, startTime, timezone}){
+        this.date = getDateTimeFromString(`${date}`, timezone, "YYYY-MM-DD")
         this.doctor = doctor
         this.timezone = timezone
-        this.startTime = getDateTimeFromString(`${date}T${startTime}`, this.timezone)
-        this.endTime = getDateTimeFromString(`${date}T${endTime}`, this.timezone)
+        this.startTime = getDateTimeFromString(`${date}T${startTime}`, timezone)
+        this.endTime = addMinutesToDateTime(getDateTimeFromString(`${date}T${startTime}`, timezone), config.slotDetails.duration)
     }
 
     validate(){

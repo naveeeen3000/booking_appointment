@@ -1,3 +1,14 @@
+<script>
+import Calendar from "@/components/calendar.vue"
+export default {
+  components: {
+    Calendar
+  }
+}
+</script>
+
 <template>
-  <div class="container">Hello world</div>
+  <div class="">
+    <Calendar />
+  </div>
 </template>

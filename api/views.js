@@ -11,7 +11,8 @@ const getFreeSlotsView = async (req, res) => {
         const {date, timezone} = req.query;
         logger.info("View: getFreeSlotsView", {data: [date, timezone]});
         const bookedSlots = await getBookedEvents(date, timezone);
-        const freeSlots = getFreeSlots(bookedSlots, date);
+        logger.info("Booked slots", bookedSlots)
+        const freeSlots = getFreeSlots(bookedSlots, date, timezone);
         const response = successResponse("Successfully fetched free slots", freeSlots);
         return res.send(response.data).status(response.httpStatus);
     } catch (err) {

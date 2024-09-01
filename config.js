@@ -14,8 +14,8 @@ const {
 const slotDetails = {
     duration: 30, //in minutes,
     timezone: 'Asia/Kolkata',
-    startTime: "10:00:00",
-    endTime: "20:00:00"
+    startTime: "14:00:00",
+    endTime: "16:00:00"
 }
 
 assert(PORT, "Port is required")
