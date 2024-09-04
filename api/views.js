@@ -14,11 +14,11 @@ const getFreeSlotsView = async (req, res) => {
         logger.info("Booked slots", bookedSlots)
         const freeSlots = getFreeSlots(bookedSlots, date, timezone);
         const response = successResponse("Successfully fetched free slots", freeSlots);
-        return res.send(response.data).status(response.httpStatus);
+        return res.json(response.data).status(response.httpStatus);
     } catch (err) {
         logger.error(`Error in getFreeSlotsView: ${err}`);
         const response = errorResponse("Error in getting free slots");
-        return res.send(response.data).status(response.httpStatus);
+        return res.json(response.data).status(response.httpStatus);
     }
 }
 
@@ -28,13 +28,13 @@ const bookEventView = async (req, res) => {
     try{
         await insertEvent(data);
         let response = successResponse("created event successfully");
-        return res.send(response.data).status(response.httpStatus);
+        return res.json(response.data).status(response.httpStatus);
     } catch(err) {
         logger.error(`Error in bookEventsView ${err}`, data)
         const response = errorResponse(
             err.message ? err.message : "Error in booking the event"
         )
-        return res.send(response.data).status(response.httpStatus);
+        return res.json(response.data).status(response.httpStatus);
     }
 }
 
@@ -44,13 +44,13 @@ const getEventsView = async (req, res) => {
         logger.info("View: getEventsView", {data: [startDate, endDate]})
         const events = await getEvents(startDate, endDate);
         const response = successResponse("Successfully fetched events", events);
-        return res.send(response.data).status(response.httpStatus);
+        return res.json(response.data).status(response.httpStatus);
     } catch(err){
         logger.error(`Error in bookEventsView ${err}`)
         const response = errorResponse(
             err.message ? err.message : "Error in booking the event"
         )
-        return res.send(response.data).status(response.httpStatus); 
+        return res.json(response.data).status(response.httpStatus); 
     }
 }
 
